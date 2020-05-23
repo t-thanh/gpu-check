@@ -112,3 +112,10 @@ config.log_device_placement = True         # to log device placement
 sess = tf.compat.v1.Session(config=config) 
 tf.compat.v1.keras.backend.set_session(sess)
 ```
+
+### Issue: 
+- run lesson2 of mdai-lesson with the tensorflow backend fix above - got this error
+```
+tensorflow/stream_executor/cuda/cuda_dnn.cc:329] Could not create cudnn handle: CUDNN_STATUS_INTERNAL_ERROR
+```
+- solution: it works when training without jupyter. Temporary solution is with tensorflow - it is better to train outside jupyter.
