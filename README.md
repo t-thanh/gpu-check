@@ -83,3 +83,32 @@ Skipping registering GPU devices...
 - expect `libcudart.so.10.1` can't find
 - solution: update `LD_LIBRARY_PATH` with `/usr/local/cuda-10.2/targets/x86_64-linux/lib`: output: same
 - solution: make link `libcudart.so.10.1` from `libcudart.so.10.2` in `/usr/local/cuda-10.2/targets/x86_64-linux/lib` ==> SOLVED
+
+### Next issue
+- start training and got this error
+- in Ipynb:
+```
+UnknownError:  Failed to get convolution algorithm. This is probably because cuDNN failed to initialize, so try looking to see if a warning log message was printed above.
+	 [[node my_model/conv2d/Conv2D (defined at <ipython-input-5-1e051998210b>:10) ]] [Op:__inference_train_step_568]
+
+Errors may have originated from an input operation.
+Input Source operations connected to node my_model/conv2d/Conv2D:
+ my_model/Cast (defined at <ipython-input-8-b4778c444eb7>:6)
+
+Function call stack:
+train_step
+```
+- in terminal
+```
+2020-05-23 19:42:21.077794: E tensorflow/stream_executor/cuda/cuda_dnn.cc:329] Could not create cudnn handle: CUDNN_STATUS_INTERNAL_ERROR
+```
+
+- [solution:](https://github.com/tensorflow/tensorflow/issues/24496) add following code to define Tesorflow backend ==> SOLVED
+```python
+from keras.backend.tensorflow_backend import set_session
+config = tf.compat.v1.ConfigProto()
+config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
+config.log_device_placement = True         # to log device placement
+sess = tf.compat.v1.Session(config=config) 
+tf.compat.v1.keras.backend.set_session(sess)
+```
